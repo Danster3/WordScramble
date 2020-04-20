@@ -126,8 +126,8 @@
         var POP = {
 
             // set up some inital values
-            WIDTH: 320,
-            HEIGHT: 480,
+            WIDTH: 414,
+            HEIGHT: 736,
             scale: 1,
             // the position of the canvas
             // in relation to the screen
@@ -492,20 +492,20 @@
 
         };
 
-        // POP.Box = function(){
-        //     var type = 'box';
-        //     var singleLetter = '';
-        //     this.x = 200;
-        //     this.y = 200;
-        //     this.w = 40;
-        //     this.h = 40;
+         POP.Box = function(){
+             var type = 'box';
+             var singleLetter = '';
+             this.x = 200;
+             this.y = 200;
+             this.w = 40;
+             this.h = 40;
 
-        //     this.render = function () {
-        //    
-        //        // function (x, y, w, h, col) {
-        //             POP.Draw.rect(this.x, this.y, this.w, this.h ,'rgba(152,255,255,1)');
-        //     };
-        // }
+             this.render = function () {
+            
+                // function (x, y, w, h, col) {
+                     POP.Draw.rect(this.x, this.y, this.w, this.h ,'rgba(152,255,255,1)');
+             };
+         }
 
         POP.Letter = function (a, singleLetter) {
             var isSelected = false;//Math.round(Math.random());
