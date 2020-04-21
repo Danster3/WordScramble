@@ -148,31 +148,16 @@
 
 
             init: function () {
-                // the proportion of width to height
                 POP.RATIO = POP.WIDTH / POP.HEIGHT;
-                // these will change when the screen is resize
                 POP.currentWidth = POP.WIDTH;
                 POP.currentHeight = POP.HEIGHT;
-                // this is our canvas element
                 POP.canvas = document.getElementsByTagName('canvas')[0];
-                // it's important to set this
-                // otherwise the browser will
-                // default to 320x200
                 POP.canvas.width = POP.WIDTH;
                 POP.canvas.height = POP.HEIGHT;
-                // the canvas context allows us to 
-                // interact with the canvas api
                 POP.ctx = POP.canvas.getContext('2d');
-                // we need to sniff out android & ios
-                // so we can hide the address bar in
-                // our resize function
                 POP.ua = navigator.userAgent.toLowerCase();
                 POP.android = POP.ua.indexOf('android') > -1 ? true : false;
                 POP.ios = (POP.ua.indexOf('iphone') > -1 || POP.ua.indexOf('ipad') > -1) ? true : false;
-
-                // set up our wave effect
-                // basically, a series of overlapping circles
-                // across the top of screen
                 POP.wave = {
                     x: -25, // x coord of first circle
                     y: -40, // y coord of first circle
@@ -180,37 +165,21 @@
                     time: 0, // we'll use this in calculating the sine wave
                     offset: 0 // this will be the sine wave offset
                 };
-                // calculate how many circles we need to 
-                // cover the screen width
                 POP.wave.total = Math.ceil(POP.WIDTH / POP.wave.r) + 1;
-
-                // listen for clicks
                 window.addEventListener('click', function (e) {
                     e.preventDefault();
                     POP.Input.set(e);
                 }, false);
-
-                // listen for touches
                 window.addEventListener('touchstart', function (e) {
                     e.preventDefault();
-                    // the event object has an array
-                    // called touches, we just want
-                    // the first touch
                     POP.Input.set(e.touches[0]);
                 }, false);
                 window.addEventListener('touchmove', function (e) {
-                    // we're not interested in this
-                    // but prevent default behaviour
-                    // so the screen doesn't scroll
-                    // or zoom
                     e.preventDefault();
                 }, false);
                 window.addEventListener('touchend', function (e) {
-                    // as above
                     e.preventDefault();
                 }, false);
-
-                // we're ready to resize
                 POP.resize();
 
                 POP.loop();
@@ -230,48 +199,25 @@
 
 
             resize: function () {
-
                 POP.currentHeight = window.innerHeight;
-                // resize the width in proportion
-                // to the new height
                 POP.currentWidth = POP.currentHeight * POP.RATIO;
-
-                // this will create some extra space on the
-                // page, allowing us to scroll pass
-                // the address bar, and thus hide it.
                 if (POP.android || POP.ios) {
                     document.body.style.height = (window.innerHeight + 50) + 'px';
                 }
-
-                // set the new canvas style width & height
-                // note: our canvas is still 320x480 but
-                // we're essentially scaling it with CSS
                 POP.canvas.style.width = POP.currentWidth + 'px';
                 POP.canvas.style.height = POP.currentHeight + 'px';
-
-                // the amount by which the css resized canvas
-                // is different to the actual (480x320) size.
                 POP.scale = POP.currentWidth / POP.WIDTH;
-                // position of canvas in relation to
-                // the screen
                 POP.offset.top = POP.canvas.offsetTop;
                 POP.offset.left = POP.canvas.offsetLeft;
-
-                // we use a timeout here as some mobile
-                // browsers won't scroll if there is not
-                // a small delay
                 window.setTimeout(function () {
                     window.scrollTo(0, 1);
                 }, 1);
             },
 
-            // this is where all entities will be moved
-            // and checked for collisions etc
             update: function () {
                 var i,
                     checkCollision = false; // we only need to check for a collision
                 // if the user tapped on this game tick
-
                 // spawn a new instance of Touch
                 // if the user has tapped the screen
                 if (POP.Input.tapped) {
@@ -289,7 +235,7 @@
 
                 // cycle through all entities and update as necessary
                 for (i = 0; i < POP.entities.length; i += 1) {
-                    POP.entities[i].update();
+                    var changeLetter = '';
 
                     if (POP.entities[i].type === 'letter' && checkCollision) {
                         hit = POP.collides(POP.entities[i],
@@ -325,10 +271,15 @@
                         }
                         POP.entities[i].selected = hit;
                     }
-
+                    POP.entities[i].update();
 
                     if (POP.entities[i].selected && POP.entities[i].type === 'letter') {
                        POP.entities[i].render();
+                       if(POP.entities[i].letter !=""){
+                           changeLetter = POP.entities[i].letter;
+                           console.log(changeLetter);
+                           POP.entities[i].update('a');
+                       }
                     }
                     if (POP.entities[i].selected && POP.entities[i].type === 'box') {
                        POP.entities[i].render();
@@ -487,10 +438,10 @@
             this.y = 200;
             this.selected = false;
 
-            this.update = function () {
-                // if (hint == true) {
-                //     this.selected = true;
-                // }
+            this.update = function (a) {
+                console.log(a);
+                this.letter = a;
+                POP.Draw.clear();
             };
 
             this.render = function () {
