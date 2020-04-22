@@ -20,13 +20,13 @@
             background: #fff;
         }
     </style>
-    <title>Clue1</title>
+    <title>Word Scrable</title>
 </head>
 
 <body>
     <canvas></canvas>
     <script>
-        window.alert("Pop the Blue letters +1 \nAvoid the red Letters -5 \nReach 10 to find the next clue");
+        window.alert("World Scramble \nPlace all the letters in the right green boxes place \nReach level 6 to win");
         // http://paulirish.com/2011/requestanimationframe-for-smart-animating
         // shim layer with setTimeout fallback
         window.requestAnimFrame = (function () {
@@ -42,28 +42,242 @@
 
         var level = 1;
         var score = 0;
-        var correct = 0;
-        var attempts = 0;
         var word = "";
         var scrambleWordString = "";
-        var hint = false;
-        var changeLetter = ' ';
-        var selectedFromLetter = 0;
-        var selectedFromBox = 0;
+        var hint = false; // add this feature in eventually 
+
         var checkedWord = '';
 
+        var selectedFrom = -1;
+        var changeLetter = '';
+
         const lvlOneWords = [
-            "I",
+            "aim",
+            "ace",
+            "bed",
+            "bee",
+            "buy",
+            "can",
+            "cow",
+            "cod",
+            "cur",
+            "did",
+            "duo",
+            "die",
+            "dry",
+            "dug",
+            "elf",
+            "egg",
+            "elk",
+            "fat",
+            "fix",
+            "fin",
+            "few",
+            "gym",
+            "guy",
+            "goo",
+            "hen",
+            "hag",
+            "hic",
+            "hut",
+            "ill",
+            "ice",
+            "imp",
+            "ink",
+            "ivy",
+            "jet",
+            "job",
+            "jaw",
+            "jab",
+            "keg",
+            "kid",
+            "lip",
+            "leg",
+            "lad",
+            "let",
+            "led",
+            "law",
+            "lid",
+            "mut",
+            "mat",
+            "mud",
+            "mid",
+            "nit",
+            "nog",
+            "now",
+            "oil",
+            "owl",
+            "oar",
+            "off",
+            "oat",
+            "one",
+            "pry",
+            "pal",
+            "peg",
+            "pea",
+            "pen",
+            "pus",
+            "rad",
+            "rem",
+            "rig",
+            "rob",
+            "saw",
+            "sob",
+            "sec",
+            "shy",
+            "sex",
+            "sly",
+            "tan",
+            "the",
+            "tic",
+            "try",
+            "cop",
+            "uke",
+            "ugh",
+            "ups",
+            "vat",
+            "van",
+            "vet",
+            "woo",
+            "wow",
+            "wry",
+            "wok",
+            "yah",
+            "yak",
+            "yay",
+            "you",
+            "yep",
+            "zit",
+            "zap",
+            "zig",
+            "zag",
+            "zip"
+        ];
+
+        const lvlTwoWords = [
             "able",
             "aced",
             "acid",
             "ally",
             "also",
             "arcs",
-            "area"];
+            "area",
+            "arch",
+            "aunt",
+            "axis",
+            "baby",
+            "back",
+            "ball",
+            "babe",
+            "bass",
+            "bell",
+            "bets",
+            "bind",
+            "bios",
+            "book",
+            "cabs",
+            "case",
+            "chef",
+            "curl",
+            "chat",
+            "chap",
+            "chin",
+            "chum",
+            "chop",
+            "coal",
+            "dabs",
+            "dame",
+            "damp",
+            "dart",
+            "dash",
+            "dark",
+            "deck",
+            "deep",
+            "diva",
+            "dice",
+            "easy",
+            "ends",
+            "epic",
+            "etch",
+            "evil",
+            "expo",
+            "exam",
+            "face",
+            "fact",
+            "fail",
+            "fair",
+            "fall",
+            "farm",
+            "fave",
+            "fart",
+            "gain",
+            "gays",
+            "gets",
+            "germ",
+            "glad",
+            "hams",
+            "hats",
+            "haze",
+            "help",
+            "head",
+            "hers",
+            "hike",
+            "jabs",
+            "junk",
+            "jury",
+            "kept",
+            "keys",
+            "kilt",
+            "kiss",
+            "lads",
+            "lamp",
+            "lean",
+            "less",
+            "mark",
+            "mile",
+            "mine",
+            "name",
+            "nuns",
+            "obit",
+            "obey",
+            "pack",
+            "pane",
+            "palm",
+            "pals",
+            "raid",
+            "reek",
+            "rift",
+            "repo",
+            "sees",
+            "seem",
+            "self",
+            "slip",
+            "thin",
+            "tied",
+            "toes",
+            "tofu",
+            "tree",
+            "ugly",
+            "unto",
+            "used",
+            "vans",
+            "visa",
+            "wack",
+            "wade",
+            "wait",
+            "wasp",
+            "yams",
+            "yarn",
+            "yoyo",
+            "zest",
+            "zero",
+            "zinc",
+            "zips",
+            "zone",
+            "zonk"
+        ];
 
-        const lvlTwoWords = [
-            "love",
+        const lvlThreeWords = [
             "abide",
             "about",
             "abort",
@@ -72,26 +286,595 @@
             "array",
             "aglow",
             "aisle",
-            "angry"];
+            "angry",
+            "ansty",
+            "basic",
+            "beers",
+            "brisk",
+            "bends",
+            "berry",
+            "below",
+            "birdy",
+            "blush",
+            "bluff",
+            "bolts",
+            "cable",
+            "champ",
+            "chalk",
+            "clams",
+            "coded",
+            "comet",
+            "crack",
+            "cycle",
+            "daddy",
+            "dance",
+            "darts",
+            "dated",
+            "denim",
+            "digit",
+            "dingy",
+            "dolly",
+            "douse",
+            "dryer",
+            "duvet",
+            "earth",
+            "eased",
+            "elope",
+            "epoxy",
+            "event",
+            "exact",
+            "equal",
+            "fable",
+            "fades",
+            "false",
+            "fever",
+            "fiber",
+            "fifty",
+            "flaw",
+            "flank",
+            "froze",
+            "fruit",
+            "gamma",
+            "gangs",
+            "gawks",
+            "gecko",
+            "goofy",
+            "goner",
+            "guild",
+            "hairy",
+            "harem",
+            "hedge",
+            "hello",
+            "helms",
+            "honor",
+            "image",
+            "imply",
+            "itchy",
+            "issue",
+            "ionic",
+            "jacks",
+            "japan",
+            "jewel",
+            "juice",
+            "junky",
+            "keeps",
+            "kooky",
+            "laced",
+            "laces",
+            "lamps",
+            "laser",
+            "leaky",
+            "lynch",
+            "mages",
+            "mafia",
+            "miles",
+            "meats",
+            "might",
+            "mixer",
+            "moths",
+            "movie",
+            "mushy",
+            "named",
+            "naval",
+            "nears",
+            "neigh",
+            "newer",
+            "nexus",
+            "noise",
+            "nooks",
+            "north",
+            "nutty",
+            "ogres",
+            "olive",
+            "olive",
+            "opens",
+            "oxide",
+            "owner",
+            "paced",
+            "palms",
+            "pends",
+            "pesky",
+            "peppy",
+            "petty",
+            "phone",
+            "phase",
+            "porky",
+            "pound",
+            "pride",
+            "print",
+            "purse",
+            "quack",
+            "queen",
+            "quart",
+            "query",
+            "quiet",
+            "rafts",
+            "rated",
+            "react",
+            "ready",
+            "realm",
+            "riced",
+            "rides",
+            "rigid",
+            "rumor",
+            "sadly",
+            "safes",
+            "saggy",
+            "sails",
+            "saint",
+            "salsa",
+            "sauce",
+            "scone",
+            "seeds",
+            "scums",
+            "sense",
+            "shark",
+            "sheds",
+            "shout",
+            "shove",
+            "sides",
+            "sixth",
+            "skeet",
+            "skill",
+            "snots",
+            "solid",
+            "sound",
+            "south",
+            "spoil",
+            "stall",
+            "stole",
+            "store",
+            "sulks",
+            "swamp",
+            "sword",
+            "syncs",
+            "tempt",
+            "texts",
+            "texas",
+            "today",
+            "tonic",
+            "topaz",
+            "tried",
+            "truth",
+            "twigs",
+            "typos",
+            "udder",
+            "unify",
+            "using",
+            "usual",
+            "valid",
+            "vapor",
+            "venue",
+            "vowel",
+            "waked",
+            "waist",
+            "waxed",
+            "whips",
+            "whole",
+            "wordy",
+            "wreck",
+            "yager",
+            "yacht",
+            "xenon",
+            "yield",
+            "yikes",
+            "zincs",
+            "zesty",
+            "zones",
+            "zincs",
+            "zooms",
+            "zeros",
+            "yummy",
+            "youth",
+            "yogas",
+            "yodle"
+        ];
 
-        const lvlThreeWords = [
-            "you",
-            "aboard",
-            "abduct",
-            "active",
-            "acutes",
-            "adored"];
-
-            
         const lvlFourWords = [
-            "Sonya",
             "aboard",
             "abduct",
             "active",
             "acutes",
-            "adored"];
+            "adored",
+            "aglets",
+            "alaska",
+            "alibis",
+            "anonym",
+            "arches",
+            "awhile",
+            "awoken",
+            "babble",
+            "badges",
+            "bagels",
+            "badman",
+            "barbie",
+            "bedbug",
+            "before",
+            "bigots",
+            "boiler",
+            "bomber",
+            "brooms",
+            "bureau",
+            "burrow",
+            "bylaws",
+            "cabins",
+            "cactus",
+            "caddie",
+            "caesar",
+            "carpet",
+            "carved",
+            "center",
+            "chasms",
+            "chewed",
+            "chorus",
+            "circus",
+            "clanky",
+            "cocked",
+            "condom",
+            "corpse",
+            "cosmic",
+            "credit",
+            "crimes",
+            "cuffed",
+            "cussed",
+            "dammit",
+            "darker",
+            "debits",
+            "decent",
+            "debris",
+            "defuze",
+            "detest",
+            "dimmer",
+            "dissed",
+            "donate",
+            "dramas",
+            "drifts",
+            "earths",
+            "echoes",
+            "elicit",
+            "eleven",
+            "envoys",
+            "enzyms",
+            "estate",
+            "faceup",
+            "fables",
+            "failed",
+            "factor",
+            "falcon",
+            "famine",
+            "fandom",
+            "fecial",
+            "feline",
+            "fences",
+            "fester",
+            "finger",
+            "fishes",
+            "floppy",
+            "frauds",
+            "frosty",
+            "gallon",
+            "gambit",
+            "garden",
+            "gawker",
+            "genres",
+            "ghostly",
+            "gifted",
+            "glossy",
+            "goodie",
+            "grayed",
+            "guilts",
+            "hacker",
+            "halves",
+            "handle",
+            "harems",
+            "harden",
+            "helmet",
+            "homely",
+            "humour",
+            "hunted",
+            "iconic",
+            "iguana",
+            "images",
+            "impact",
+            "invade",
+            "ironic",
+            "issued",
+            "italic",
+            "jacked",
+            "jester",
+            "jigsaw",
+            "jiggly",
+            "jockey",
+            "juices",
+            "jungle",
+            "kayaks",
+            "keypad",
+            "kibble",
+            "knifer",
+            "kosher",
+            "labour",
+            "ladder",
+            "ladies",
+            "laired",
+            "lamped",
+            "leachy",
+            "licker",
+            "liquid",
+            "lurker",
+            "magics",
+            "magots",
+            "mallet",
+            "mantis",
+            "member",
+            "mickey",
+            "mildly",
+            "moolah",
+            "mullet",
+            "myself",
+            "nachos",
+            "nerved",
+            "nibble",
+            "nickle",
+            "nimble",
+            "nitros",
+            "nozzle",
+            "nymphs",
+            "nylons",
+            "oblige",
+            "offkey",
+            "oddity",
+            "online",
+            "onside",
+            "oodles",
+            "orbits",
+            "others",
+            "owlish",
+            "oyster",
+            "paints",
+            "pantry",
+            "parish",
+            "pastor",
+            "pencil",
+            "pepper",
+            "phones",
+            "picked",
+            "plague",
+            "prefer",
+            "prompt",
+            "python",
+            "quacks",
+            "quaint",
+            "quoted",
+            "rabbit",
+            "racoon",
+            "radish",
+            "rarely",
+            "ravish",
+            "record",
+            "refuel",
+            "reflex",
+            "resent",
+            "richly",
+            "rotate",
+            "ruined",
+            "sacked",
+            "saliva",
+            "salted",
+            "sample",
+            "sauced",
+            "savage",
+            "scheme",
+            "scopes",
+            "scruff",
+            "search",
+            "sensor",
+            "shield",
+            "shrimp",
+            "slaved",
+            "sludge",
+            "somber",
+            "splosh",
+            "stench",
+            "stocks",
+            "stumps",
+            "syrups",
+            "tablet",
+            "tangle",
+            "tattoo",
+            "tenses",
+            "thwart",
+            "toasts",
+            "tomboy",
+            "traced",
+            "troves",
+            "turban",
+            "uglier",
+            "unclog",
+            "unpack",
+            "upkeep",
+            "upsets",
+            "urchin",
+            "utmost",
+            "utopia",
+            "vacant",
+            "vacuum",
+            "valued",
+            "vector",
+            "versal",
+            "vexing",
+            "virtue",
+            "vogued",
+            "vowels",
+            "vortex",
+            "waffle",
+            "walrus",
+            "weapon",
+            "weirdo",
+            "wicket",
+            "worthy",
+            "yanked",
+            "yawned",
+            "yellow",
+            "youths",
+            "zapped",
+            "zeroes",
+            "zested",
+            "zoomed",
+            "zygote"
+        ];
 
-
+        const lvlFiveWords = [
+            "abducts",
+            "abolish",
+            "account",
+            "acronym",
+            "adjures",
+            "adopted",
+            "agitate",
+            "aidless",
+            "alarmed",
+            "alchohol",
+            "alfredo",
+            "alleged",
+            "allergy",
+            "allures",
+            "amiable",
+            "aminity",
+            "analyst",
+            "another",
+            "anxious",
+            "apricot",
+            "arrived",
+            "attacks",
+            "autopsy",
+            "awkward",
+            "babbles",
+            "backset",
+            "banjoes",
+            "bandits",
+            "batched",
+            "beacons",
+            "bedpost",
+            "bedsore",
+            "belongs",
+            "benches",
+            "berserk",
+            "bicolor",
+            "bizarre",
+            "blubbed",
+            "bombers",
+            "borrows",
+            "bracers",
+            "bricked",
+            "brutish",
+            "bulgers",
+            "burrito",
+            "bygones",
+            "cabinet",
+            "cahoots",
+            "cameras",
+            "canteen",
+            "captive",
+            "cartels",
+            "cashbox",
+            "cattish",
+            "censors",
+            "chaffer",
+            "charter",
+            "cheeses",
+            "chromic",
+            "clamped",
+            "clunker",
+            "collars",
+            "compute",
+            "consult",
+            "corrupt",
+            "creamed",
+            "crystal",
+            "cyclone",
+            "daggers",
+            "dangled",
+            "daycare",
+            "decoyed",
+            "deduced",
+            "dentist",
+            "dilator",
+            "discard",
+            "dollars",
+            "doweled",
+            "drudged",
+            "dwarves",
+            "egoless",
+            "elastic",
+            "endurer",
+            "enforce",
+            "epilogs",
+            "erupted",
+            "evoking",
+            "extinct",
+            "fanatic",
+            "ferrets",
+            "fifteen",
+            "flashes",
+            "flushes",
+            "footman",
+            "fossils",
+            "freedom",
+            "frowned",
+            "furrows",
+            "gassers",
+            "genders",
+            "glimpse",
+            "googled",
+            "grayest",
+            "grudged",
+            "gymnast",
+            "hagfish",
+            "hammock",
+            "hardily",
+            "healthy",
+            "herself",
+            "hoarser",
+            "hoisted",
+            "horsing",
+            "hunches",
+            "icefall",
+            "idolism",
+            "illegal",
+            "impeach",
+            "implode",
+            "indoors",
+            "inkpots",
+            "invades",
+            "issuers",
+            "jackets",
+            "jaywalk",
+            "kettles",
+            "labeled",
+            "mangled",
+            "maximum",
+            "nibbled"
+        ];
 
         function checkOrder() {
             for (i = 0; i < POP.entities.length; i += 1) {
@@ -101,7 +884,7 @@
             }
 
             if (checkedWord == word) {
-                window.alert("You made it to level " + (level+1));
+                window.alert("You made it to level " + (level + 1));
                 NextLevel();
             } else {
                 checkedWord = '';
@@ -110,16 +893,16 @@
         }
 
         function RemoveEntities() {
-        POP.entities.splice(0,POP.entities.length);
+            POP.entities.splice(0, POP.entities.length);
         }
 
         function NextLevel() {
-            level += 1;
             if (level == 5) {
-                window.alert("You did it, I love you Sonya Gwen Cossey " + String.fromCodePoint(0x1F600));
+                window.alert("You did it " + String.fromCodePoint(0x1F600));
                 RemoveEntities();
+                POP.showCongrats();
             } else {
-               
+                level += 1;
                 word = randomWord(level);
                 scrambleWordString = scrambleWord(word);
                 RemoveEntities();
@@ -129,20 +912,17 @@
 
         function randomWord(level) {
             if (level == 1) {
-                word = lvlOneWords[0];//lvlOneWords[Math.round(Math.random() * lvlOneWords.length)];
+                word = lvlOneWords[Math.round(Math.random() * lvlOneWords.length)];
             } else if (level == 2) {
-                word = lvlTwoWords[0];//lvlTwoWords[Math.round(Math.random() * lvlTwoWords.length)];
+                word = lvlTwoWords[Math.round(Math.random() * lvlTwoWords.length)];
             } else if (level == 3) {
-                word = lvlThreeWords[0];//lvlThreeWords[Math.round(Math.random() * lvlThreeWords.length)];
+                word = lvlThreeWords[Math.round(Math.random() * lvlThreeWords.length)];
             } else if (level == 4) {
-                word = lvlFourWords[0];
+                word = lvlFourWords[Math.round(Math.random() * lvlThreeWords.length)];
             } else if (level == 5) {
-
-            } else {
-
+                word = lvlFiveWords[Math.round(Math.random() * lvlThreeWords.length)];
             }
 
-            // word = lvlOneWords[1];
             return word;
         }
 
@@ -246,7 +1026,8 @@
                 }
 
                 // POP.entities.push(new POP.Box((50), ('')));            
-                
+                selectedFrom = -1;
+
             },
 
 
@@ -325,36 +1106,27 @@
                     POP.entities[i].update();
 
                     if (POP.entities[i].selected && POP.entities[i].type === 'letter') {
+                        if (selectedFrom == -1) {
+                            selectedFrom = i;
+                        } else if (selectedFrom != i) {
+                            POP.switch(i, selectedFrom);
+                            selectedFrom = -1;
+                            POP.entities[i].selected = false;
+                        }
                         POP.entities[i].render();
-                        if (POP.entities[i].letter != "") {
-                            changeLetter = POP.entities[i].letter;
-                            selectedFromLetter = i;
-                        }
-
-                        if (POP.entities[selectedFromBox].letter != " ") {
-                          //  console.log(selectedFromBox)
-                        }
+                        checkOrder();
                     }
 
                     if (POP.entities[i].selected && POP.entities[i].type === 'box') {
-                      
-                        if (changeLetter != "") {
-                            POP.entities[i].letter = changeLetter;
-                            changeLetter = '';
-                            POP.entities[selectedFromLetter].letter = changeLetter;
-                            selectedFromBox = i;
-                            checkOrder();
-                        // }else{
-                        //     var perviousBoxLetter =  POP.entities[selectedFromBox].letter;
-                        //     var newBoxLetter = POP.entities[i].letter;
-                        //     POP.entities[i].letter = perviousBoxLetter;
-                        //     POP.entities[selectedFromBox].letter = newBoxLetter;
-                        //     checkOrder();
+                        if (selectedFrom == -1) {
+                            selectedFrom = i;
+                        } else if (selectedFrom != i) {
+                            POP.switch(i, selectedFrom);
+                            selectedFrom = -1;
+                            POP.entities[i].selected = false;
                         }
-
-                      
                         POP.entities[i].render();
-                        POP.entities[selectedFromBox].render();
+                        checkOrder();
                     }
 
 
@@ -393,16 +1165,12 @@
                 }
 
                 POP.Draw.text('Level: ' + level, 20, 90, 14, '#fff');
-               // POP.Draw.text('Word: ' + word, 20, 110, 14, '#fff');
-               // POP.Draw.text('Scrabled Word: ' + scrambleWordString, 20, 130, 14, '#fff');
+                POP.Draw.text('Word: ' + word, 20, 110, 14, '#fff');
+                POP.Draw.text('Scrabled Word: ' + scrambleWordString, 20, 130, 14, '#fff');
 
             },
 
 
-            // the actual loop
-            // requests animation frame
-            // then proceeds to update
-            // and render
             loop: function () {
 
                 requestAnimFrame(POP.loop);
@@ -414,9 +1182,17 @@
 
         };
 
+        POP.showCongrats = function () {
 
-        // a is the box
-        // b is the touch circual
+        }
+
+        POP.switch = function (a, b) {
+            var c = POP.entities[a].letter;
+            POP.entities[a].letter = POP.entities[b].letter;
+            POP.entities[b].letter = c;
+        }
+
+        //  a is the box, b is the touch circual
         POP.collides = function (a, b) {
             return !(
                 ((a.y + a.h) < (b.y)) ||
@@ -495,9 +1271,7 @@
                 POP.Draw.text(this.letter, this.x + this.w / 2 - 5, this.y + this.h / 2 + 7, 20, '#fff');
             };
             this.update = function () {
-                // if (hint == true) {
-                //     this.selected = true;
-                // }
+
             };
         }
 
