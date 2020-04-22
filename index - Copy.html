@@ -48,8 +48,8 @@
         var scrambleWordString = "";
         var hint = false;
         var changeLetter = '';
-        var selectedFromLetter = 0;
-        var selectedFromBox = 0;
+        var FirstLetter = 0;
+        var SecondLetter = 0;
 
 
         const lvlOneWords = [
@@ -280,11 +280,10 @@
                        POP.entities[i].render();
                        if(POP.entities[i].letter !=""){
                            changeLetter = POP.entities[i].letter;
-                           selectedFromLetter = i;
-                       }
-                       
-                       if(POP.entities[selectedFromBox].letter !=""){
-                           console.log(selectedFromBox)
+                           FirstLetter = i;
+                       } 
+                       if(POP.entities[SecondLetter].letter !=""){
+                           console.log(SecondLetter)
                        }
                     }
 
@@ -294,8 +293,8 @@
                        POP.entities[i].letter = changeLetter;
                      //  console.log(changeLetter);
                         changeLetter = '';
-                        POP.entities[selectedFromLetter].letter= changeLetter;
-                        selectedFromBox =i;
+                        POP.entities[FirstLetter].letter= changeLetter;
+                        SecondLetter =i;
                        }
                     }
 

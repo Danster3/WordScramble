@@ -40,17 +40,17 @@
                 };
         })();
 
-        var level = 2;
+        var level = 1;
         var score = 0;
         var correct = 0;
         var attempts = 0;
         var word = "";
         var scrambleWordString = "";
         var hint = false;
-        var changeLetter = '';
+        var changeLetter = ' ';
         var selectedFromLetter = 0;
         var selectedFromBox = 0;
-
+        var checkedWord = '';
 
         const lvlOneWords = [
             "able",
@@ -60,13 +60,6 @@
             "also",
             "arcs",
             "area"];
-
-        const lvlThreeWords = [
-            "aboard",
-            "abduct",
-            "active",
-            "acutes",
-            "adored"];
 
         const lvlTwoWords = [
             "abide",
@@ -79,14 +72,54 @@
             "aisle",
             "angry"];
 
+        const lvlThreeWords = [
+            "aboard",
+            "abduct",
+            "active",
+            "acutes",
+            "adored"];
+
+
+
+        function checkOrder() {
+            for (i = 0; i < POP.entities.length; i += 1) {
+                if (POP.entities[i].type === 'box') {
+                    checkedWord += POP.entities[i].letter
+                }
+            }
+
+            if (checkedWord == word) {
+                window.alert("You did it " + String.fromCodePoint(0x1F600));
+                NextLevel();
+            } else {
+                checkedWord = '';
+            }
+
+        }
+
+        function RemoveEntities() {
+        POP.entities.splice(0,POP.entities.length);
+        }
+
+        function NextLevel() {
+            if (level == 5) {
+
+            } else {
+                level += 1;
+                word = randomWord(level);
+                scrambleWordString = scrambleWord(word);
+                RemoveEntities();
+                POP.init();
+            }
+        }
 
         function randomWord(level) {
             if (level == 1) {
-                word = lvlOneWords[1];
+                word = lvlOneWords[Math.round(Math.random() * lvlOneWords.length)];
             } else if (level == 2) {
                 word = lvlTwoWords[Math.round(Math.random() * lvlTwoWords.length)];
             } else if (level == 3) {
-
+                word = lvlThreeWords[Math.round(Math.random() * lvlThreeWords.length)];
             } else if (level == 4) {
 
             } else if (level == 5) {
@@ -117,6 +150,7 @@
             return letters.join(" ");
         }
 
+
         word = randomWord(level);
         scrambleWordString = scrambleWord(word);
 
@@ -133,7 +167,7 @@
             offset: { top: 0, left: 0 },
             // store all letter, touches, particles etc
             entities: [],
-          
+
             // for tracking player's progress
             score: {
                 taps: 0,
@@ -188,14 +222,15 @@
                 POP.loop();
                 var lengthOfWord = word.length;
 
-                for (i = 0; i < lengthOfWord; i++) {              
-                    POP.entities.push(new POP.Letter((50 + 50 * i), (scrambleWordString.charAt(i*2))));
+
+                for (i = 0; i < lengthOfWord; i++) {
+                    POP.entities.push(new POP.Letter((50 + 50 * i), (scrambleWordString.charAt(i * 2))));
                 }
 
-                 for (i = 0; i < lengthOfWord; i++) {              
-                     POP.entities.push(new POP.Box((50 + 50 * i), ("")));
-                 }
-                    
+                for (i = 0; i < lengthOfWord; i++) {
+                    POP.entities.push(new POP.Box((50 + 50 * i), ("")));
+                }
+
                 // POP.entities.push(new POP.Box((50), ('')));            
 
             },
@@ -226,7 +261,7 @@
                 if (POP.Input.tapped) {
                     // keep track of taps; needed to 
                     // calculate accuracy
-                  
+
                     // add a new touch
                     POP.entities.push(new POP.Touch(POP.Input.x, POP.Input.y));
                     // set tapped back to false
@@ -238,7 +273,6 @@
 
                 // cycle through all entities and update as necessary
                 for (i = 0; i < POP.entities.length; i += 1) {
-                  
 
                     if (POP.entities[i].type === 'letter' && checkCollision) {
                         hit = POP.collides(POP.entities[i],
@@ -277,31 +311,33 @@
                     POP.entities[i].update();
 
                     if (POP.entities[i].selected && POP.entities[i].type === 'letter') {
-                       POP.entities[i].render();
-                       if(POP.entities[i].letter !=""){
-                           changeLetter = POP.entities[i].letter;
-                           selectedFromLetter = i;
-                       }
-                       
-                       if(POP.entities[selectedFromBox].letter !=""){
-                           console.log(selectedFromBox)
-                       }
+                        POP.entities[i].render();
+                        if (POP.entities[i].letter != "") {
+                            changeLetter = POP.entities[i].letter;
+                            selectedFromLetter = i;
+                        }
+
+                        if (POP.entities[selectedFromBox].letter != " ") {
+                            console.log(selectedFromBox)
+                        }
                     }
 
                     if (POP.entities[i].selected && POP.entities[i].type === 'box') {
-                       POP.entities[i].render();
-                       if(changeLetter !=""){
-                       POP.entities[i].letter = changeLetter;
-                     //  console.log(changeLetter);
-                        changeLetter = '';
-                        POP.entities[selectedFromLetter].letter= changeLetter;
-                        selectedFromBox =i;
-                       }
+                        POP.entities[i].render();
+                        if (changeLetter != "") {
+                            POP.entities[i].letter = changeLetter;
+                            //  console.log(changeLetter);
+                            changeLetter = '';
+                            POP.entities[selectedFromLetter].letter = changeLetter;
+                            selectedFromBox = i;
+                            checkOrder();
+                        }
                     }
 
-                    if (POP.entities[i].selected&& !POP.entities[i].type === 'letter') {
+                    if (POP.entities[i].selected && !(POP.entities[i].type === 'letter') && !(POP.entities[i].type === 'box')) {
                         POP.entities.splice(i, 1);
                     }
+
                 }
 
                 // update wave offset
@@ -417,7 +453,7 @@
             };
         };
 
-        POP.Box = function (xPosition,singleLetter ) {
+        POP.Box = function (xPosition, singleLetter) {
             this.type = 'box';
             this.letter = singleLetter;
             this.x = xPosition;
@@ -427,11 +463,11 @@
             this.selected = false;
 
             this.render = function () {
-                    if(this.selected){
-                        POP.Draw.rect(this.x, this.y, this.w, this.h, 'rgba(152,200,200,1)');
-                    }else{
-                        POP.Draw.rect(this.x, this.y, this.w, this.h, 'rgba(150,200,150,1)');   
-                    }
+                if (this.selected) {
+                    POP.Draw.rect(this.x, this.y, this.w, this.h, 'rgba(152,200,200,1)');
+                } else {
+                    POP.Draw.rect(this.x, this.y, this.w, this.h, 'rgba(150,200,150,1)');
+                }
                 POP.Draw.text(this.letter, this.x + this.w / 2 - 5, this.y + this.h / 2 + 7, 20, '#fff');
             };
             this.update = function () {
@@ -441,7 +477,7 @@
             };
         }
 
-        POP.Letter = function (xPosition, singleLetter) {          
+        POP.Letter = function (xPosition, singleLetter) {
             this.letter = singleLetter;
             this.type = 'letter';
             this.w = 30;
@@ -451,13 +487,13 @@
             this.selected = false;
 
             this.update = function () {
-               
+
             };
 
             this.render = function () {
-                if(this.selected){
+                if (this.selected) {
                     POP.Draw.rect(this.x, this.y, this.w, this.h, 'rgba(152,0,50,1)');
-                }else{
+                } else {
                     POP.Draw.rect(this.x, this.y, this.w, this.h, 'rgba(152,255,255,1)');
                 }
                 POP.Draw.text(this.letter, this.x + this.w / 2 - 5, this.y + this.h / 2 + 7, 20, '#fff');
