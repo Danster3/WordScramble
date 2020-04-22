@@ -53,6 +53,7 @@
         var checkedWord = '';
 
         const lvlOneWords = [
+            "I",
             "able",
             "aced",
             "acid",
@@ -62,6 +63,7 @@
             "area"];
 
         const lvlTwoWords = [
+            "love",
             "abide",
             "about",
             "abort",
@@ -73,6 +75,16 @@
             "angry"];
 
         const lvlThreeWords = [
+            "you",
+            "aboard",
+            "abduct",
+            "active",
+            "acutes",
+            "adored"];
+
+            
+        const lvlFourWords = [
+            "Sonya",
             "aboard",
             "abduct",
             "active",
@@ -89,7 +101,7 @@
             }
 
             if (checkedWord == word) {
-                window.alert("You did it " + String.fromCodePoint(0x1F600));
+                window.alert("You made it to level " + (level+1));
                 NextLevel();
             } else {
                 checkedWord = '';
@@ -102,10 +114,12 @@
         }
 
         function NextLevel() {
+            level += 1;
             if (level == 5) {
-
+                window.alert("You did it, I love you Sonya Gwen Cossey " + String.fromCodePoint(0x1F600));
+                RemoveEntities();
             } else {
-                level += 1;
+               
                 word = randomWord(level);
                 scrambleWordString = scrambleWord(word);
                 RemoveEntities();
@@ -115,13 +129,13 @@
 
         function randomWord(level) {
             if (level == 1) {
-                word = lvlOneWords[Math.round(Math.random() * lvlOneWords.length)];
+                word = lvlOneWords[0];//lvlOneWords[Math.round(Math.random() * lvlOneWords.length)];
             } else if (level == 2) {
-                word = lvlTwoWords[Math.round(Math.random() * lvlTwoWords.length)];
+                word = lvlTwoWords[0];//lvlTwoWords[Math.round(Math.random() * lvlTwoWords.length)];
             } else if (level == 3) {
-                word = lvlThreeWords[Math.round(Math.random() * lvlThreeWords.length)];
+                word = lvlThreeWords[0];//lvlThreeWords[Math.round(Math.random() * lvlThreeWords.length)];
             } else if (level == 4) {
-
+                word = lvlFourWords[0];
             } else if (level == 5) {
 
             } else {
@@ -232,7 +246,7 @@
                 }
 
                 // POP.entities.push(new POP.Box((50), ('')));            
-
+                
             },
 
 
@@ -318,21 +332,31 @@
                         }
 
                         if (POP.entities[selectedFromBox].letter != " ") {
-                            console.log(selectedFromBox)
+                          //  console.log(selectedFromBox)
                         }
                     }
 
                     if (POP.entities[i].selected && POP.entities[i].type === 'box') {
-                        POP.entities[i].render();
+                      
                         if (changeLetter != "") {
                             POP.entities[i].letter = changeLetter;
-                            //  console.log(changeLetter);
                             changeLetter = '';
                             POP.entities[selectedFromLetter].letter = changeLetter;
                             selectedFromBox = i;
                             checkOrder();
+                        // }else{
+                        //     var perviousBoxLetter =  POP.entities[selectedFromBox].letter;
+                        //     var newBoxLetter = POP.entities[i].letter;
+                        //     POP.entities[i].letter = perviousBoxLetter;
+                        //     POP.entities[selectedFromBox].letter = newBoxLetter;
+                        //     checkOrder();
                         }
+
+                      
+                        POP.entities[i].render();
+                        POP.entities[selectedFromBox].render();
                     }
+
 
                     if (POP.entities[i].selected && !(POP.entities[i].type === 'letter') && !(POP.entities[i].type === 'box')) {
                         POP.entities.splice(i, 1);
@@ -369,8 +393,8 @@
                 }
 
                 POP.Draw.text('Level: ' + level, 20, 90, 14, '#fff');
-                POP.Draw.text('Word: ' + word, 20, 110, 14, '#fff');
-                POP.Draw.text('Scrabled Word: ' + scrambleWordString, 20, 130, 14, '#fff');
+               // POP.Draw.text('Word: ' + word, 20, 110, 14, '#fff');
+               // POP.Draw.text('Scrabled Word: ' + scrambleWordString, 20, 130, 14, '#fff');
 
             },
 
@@ -492,7 +516,7 @@
 
             this.render = function () {
                 if (this.selected) {
-                    POP.Draw.rect(this.x, this.y, this.w, this.h, 'rgba(152,0,50,1)');
+                    POP.Draw.rect(this.x, this.y, this.w, this.h, 'rgba(152,50,50,1)');
                 } else {
                     POP.Draw.rect(this.x, this.y, this.w, this.h, 'rgba(152,255,255,1)');
                 }
