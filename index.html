@@ -39,7 +39,7 @@
                     window.setTimeout(callback, 1000 / 60);
                 };
         })();
-
+     
         var level = 1;
         var score = 0;
         var word = "";
@@ -50,6 +50,11 @@
 
         var selectedFrom = -1;
         var changeLetter = '';
+
+        var finshedFlag =false;
+        var TotalTime ;
+        var startTime ; 
+        var endTime;
 
         const lvlOneWords = [
             "aim",
@@ -896,11 +901,19 @@
             POP.entities.splice(0, POP.entities.length);
         }
 
+        function finished(){
+            d = new Date();
+            endTime = d.getTime();
+
+            TotalTime = endTime - startTime;
+            finshedFlag = true;
+        }
+
         function NextLevel() {
             if (level == 5) {
                 window.alert("You did it " + String.fromCodePoint(0x1F600));
                 RemoveEntities();
-                POP.showCongrats();
+               finished();
             } else {
                 level += 1;
                 word = randomWord(level);
@@ -909,6 +922,8 @@
                 POP.init();
             }
         }
+
+       
 
         function randomWord(level) {
             if (level == 1) {
@@ -947,11 +962,12 @@
 
         word = randomWord(level);
         scrambleWordString = scrambleWord(word);
-
-
+        
+        var d = new Date();
+        startTime = d.getTime();
         // namespace our game
         var POP = {
-
+             
             // set up some inital values
             WIDTH: 414,
             HEIGHT: 736,
@@ -1050,23 +1066,14 @@
             update: function () {
                 var i,
                     checkCollision = false; // we only need to check for a collision
-                // if the user tapped on this game tick
-                // spawn a new instance of Touch
-                // if the user has tapped the screen
-                if (POP.Input.tapped) {
-                    // keep track of taps; needed to 
-                    // calculate accuracy
 
-                    // add a new touch
+                if (POP.Input.tapped) {
                     POP.entities.push(new POP.Touch(POP.Input.x, POP.Input.y));
-                    // set tapped back to false
-                    // to avoid spawning a new touch
-                    // in the next cycle
+
                     POP.Input.tapped = false;
                     checkCollision = true;
                 }
 
-                // cycle through all entities and update as necessary
                 for (i = 0; i < POP.entities.length; i += 1) {
 
                     if (POP.entities[i].type === 'letter' && checkCollision) {
@@ -1093,8 +1100,8 @@
                         if (hit) {
                             for (var n = 0; n < 5; n += 1) {
                                 POP.entities.push(new POP.Particle(
-                                    POP.entities[i].x,
-                                    POP.entities[i].y,
+                                    POP.entities[n].x,
+                                    POP.entities[n].y,
                                     2,
                                     // random opacity to spice it up a bit
                                     'rgba(255,255,255,' + Math.random() * 1 + ')'
@@ -1129,7 +1136,6 @@
                         checkOrder();
                     }
 
-
                     if (POP.entities[i].selected && !(POP.entities[i].type === 'letter') && !(POP.entities[i].type === 'box')) {
                         POP.entities.splice(i, 1);
                     }
@@ -1143,7 +1149,6 @@
             },
 
 
-            // this is where we draw all the entities
             render: function () {
                 var i;
                 // background Color
@@ -1151,7 +1156,6 @@
 
                 // display snazzy wave effect
                 for (i = 0; i < POP.wave.total; i++) {
-
                     POP.Draw.circle(
                         POP.wave.x + POP.wave.offset + (i * POP.wave.r),
                         POP.wave.y,
@@ -1164,9 +1168,9 @@
                     POP.entities[i].render();
                 }
 
-                POP.Draw.text('Level: ' + level, 20, 90, 14, '#fff');
-                POP.Draw.text('Word: ' + word, 20, 110, 14, '#fff');
-                POP.Draw.text('Scrabled Word: ' + scrambleWordString, 20, 130, 14, '#fff');
+                POP.Draw.text('Level: ' + level, 50, 90, 20, '#fff');
+                //  POP.Draw.text('Word: ' + word, 20, 110, 14, '#fff');
+                // POP.Draw.text('Scrabled Word: ' + scrambleWordString, 20, 130, 14, '#fff');
 
             },
 
@@ -1177,12 +1181,29 @@
 
                 POP.update();
                 POP.render();
+
+                if (finshedFlag){
+                    POP.showCongrats();
+                }
+               
             }
 
 
         };
 
+       
+
         POP.showCongrats = function () {
+            POP.Draw.text('Congrats ', 50, 200, 40, '#fff');
+            POP.Draw.text('Your time was', 50, 250, 40, '#fff');
+            POP.Draw.text(Math.round(TotalTime/1000) + " Seconds", 50, 350, 40, '#fff');
+            POP.entities.push(new POP.Particle(
+                Math.round(Math.random() * POP.WIDTH),
+                (Math.round(Math.random() * POP.HEIGHT / 2) + POP.HEIGHT / 2),
+                5,
+                // random opacity to spice it up a bit
+                'rgba(255,' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ',' + Math.random() * 1 + ')'
+            ));
 
         }
 
